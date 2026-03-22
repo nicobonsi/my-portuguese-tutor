@@ -9,8 +9,16 @@
       <div class="w-10 h-10 border-4 border-portuguese-green border-t-transparent rounded-full animate-spin" />
     </div>
 
+    <!-- Lesson fullscreen view (overlays everything) -->
+    <LessonView
+      v-else-if="activeLesson"
+      :lesson="activeLesson"
+      @done="onLessonDone"
+      @exit="activeLesson = null"
+    />
+
     <!-- App shell -->
-    <template v-else>
+    <template v-else-if="isLoggedIn">
       <header class="bg-portuguese-green text-white px-4 py-3 flex items-center justify-between shadow-md">
         <div class="flex items-center gap-2">
           <span class="text-2xl">🇵🇹</span>
@@ -22,7 +30,8 @@
       </header>
 
       <main class="flex-1 overflow-y-auto pb-20">
-        <Dashboard v-if="activeTab === 'home'" />
+        <Dashboard v-if="activeTab === 'home'" @start-lesson="openLesson" />
+        <CurriculumPath v-else-if="activeTab === 'lessons'" @open-lesson="openLesson" />
         <Leaderboard v-else-if="activeTab === 'leaderboard'" />
         <div v-else class="flex flex-col items-center justify-center h-full p-8 text-center text-gray-400">
           <div class="text-4xl mb-3">🚧</div>
@@ -51,25 +60,39 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useAuth } from './composables/useAuth'
+import type { Lesson } from './data/curriculum'
 import AuthScreen from './components/AuthScreen.vue'
 import Dashboard from './components/Dashboard.vue'
+import CurriculumPath from './components/CurriculumPath.vue'
+import LessonView from './components/LessonView.vue'
 import Leaderboard from './components/Leaderboard.vue'
 
 const { isLoggedIn, loading, signOut } = useAuth()
 
 const activeTab = ref('home')
+const activeLesson = ref<Lesson | null>(null)
 
 const navItems = [
   { id: 'home',        icon: '🏠', label: 'Home' },
   { id: 'lessons',     icon: '📚', label: 'Lessons' },
-  { id: 'practice',   icon: '💬', label: 'Practice' },
+  { id: 'practice',    icon: '💬', label: 'Practice' },
   { id: 'leaderboard', icon: '🏆', label: 'Ranking' },
   { id: 'profile',     icon: '👤', label: 'Profile' },
 ]
 
+function openLesson(lesson: Lesson) {
+  activeLesson.value = lesson
+}
+
+function onLessonDone() {
+  activeLesson.value = null
+  activeTab.value = 'lessons'
+}
+
 async function handleSignOut() {
   await signOut()
   activeTab.value = 'home'
+  activeLesson.value = null
 }
 </script>
 
@@ -80,15 +103,7 @@ async function handleSignOut() {
   --color-portuguese-green: #1a6b3c;
 }
 
-.text-portuguese-green {
-  color: var(--color-portuguese-green);
-}
-
-.bg-portuguese-green {
-  background-color: var(--color-portuguese-green);
-}
-
-.border-portuguese-green {
-  border-color: var(--color-portuguese-green);
-}
+.text-portuguese-green { color: var(--color-portuguese-green); }
+.bg-portuguese-green { background-color: var(--color-portuguese-green); }
+.border-portuguese-green { border-color: var(--color-portuguese-green); }
 </style>

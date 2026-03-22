@@ -19,7 +19,8 @@ My Portuguese Tutor is a PWA (Progressive Web App) that acts as an AI-powered Po
 | Build | Vite 8 |
 | PWA | vite-plugin-pwa (Workbox) |
 | Styling | Tailwind CSS v4 |
-| Deployment | GitHub Pages (or TBD) |
+| Backend / Auth / DB | Supabase |
+| Deployment | Vercel |
 
 ---
 
@@ -107,8 +108,11 @@ Before modifying a file, read the relevant reference doc:
 ## Current Build Context
 
 **Current:** v0.1.0 — Foundation setup (scaffold, PWA config, foundational docs)
-- Status: Initial setup complete, awaiting product details from operator
-- Design doc: none yet (scaffold phase)
+- Status: Complete
+
+**Next:** v0.2.0 — Infrastructure: Supabase auth + Vercel deployment
+**Then:** v0.3.0 — Progress tracking, gamification, leaderboard
+- Design doc: `Docs/Design/V0.3_PROGRESS_GAMIFICATION_LEADERBOARD.md`
 
 **Previous:** N/A (new project)
 

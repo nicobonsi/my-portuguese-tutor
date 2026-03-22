@@ -32,6 +32,7 @@
       <main class="flex-1 overflow-y-auto pb-20">
         <Dashboard v-if="activeTab === 'home'" @start-lesson="openLesson" />
         <CurriculumPath v-else-if="activeTab === 'lessons'" @open-lesson="openLesson" />
+        <PracticeHub v-else-if="activeTab === 'practice'" />
         <Leaderboard v-else-if="activeTab === 'leaderboard'" />
         <div v-else class="flex flex-col items-center justify-center h-full p-8 text-center text-gray-400">
           <div class="text-4xl mb-3">🚧</div>
@@ -66,6 +67,7 @@ import Dashboard from './components/Dashboard.vue'
 import CurriculumPath from './components/CurriculumPath.vue'
 import LessonView from './components/LessonView.vue'
 import Leaderboard from './components/Leaderboard.vue'
+import PracticeHub from './components/PracticeHub.vue'
 
 const { isLoggedIn, loading, signOut } = useAuth()
 

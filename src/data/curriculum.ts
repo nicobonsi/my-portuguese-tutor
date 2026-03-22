@@ -640,7 +640,10 @@ const module5: Module = {
 // ============================================================
 // FULL CURRICULUM EXPORT
 // ============================================================
-export const curriculum: Module[] = [module0, module1, module2, module3, module4, module5]
+import { modulesA1Extra } from './curriculum-a1-extra'
+import { modulesA2 } from './curriculum-a2'
+
+export const curriculum: Module[] = [module0, module1, module2, module3, module4, module5, ...modulesA1Extra, ...modulesA2]
 
 export const allLessons: Lesson[] = curriculum.flatMap(m => m.lessons)
 

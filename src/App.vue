@@ -1,49 +1,76 @@
 <template>
-  <div class="min-h-screen bg-white flex flex-col">
-    <!-- Header -->
-    <header class="bg-portuguese-green text-white px-4 py-3 flex items-center justify-between shadow-md">
-      <div class="flex items-center gap-2">
-        <span class="text-2xl">🇵🇹</span>
-        <h1 class="text-lg font-semibold tracking-wide">My Portuguese Tutor</h1>
-      </div>
-    </header>
+  <div class="min-h-screen bg-gray-50 flex flex-col">
 
-    <!-- Main content area -->
-    <main class="flex-1 flex flex-col items-center justify-center p-6 text-center">
-      <div class="max-w-md w-full">
-        <div class="text-6xl mb-4">🇵🇹</div>
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Bem-vindo!</h2>
-        <p class="text-gray-500 text-base mb-6">Your AI-powered Portuguese tutor is being built.</p>
-        <div class="bg-gray-50 rounded-xl p-4 text-sm text-gray-400 border border-gray-200">
-          Coming soon — lessons, conversations, and more.
+    <!-- Auth screen -->
+    <AuthScreen v-if="!isLoggedIn && !loading" />
+
+    <!-- Loading spinner -->
+    <div v-else-if="loading" class="flex-1 flex items-center justify-center">
+      <div class="w-10 h-10 border-4 border-portuguese-green border-t-transparent rounded-full animate-spin" />
+    </div>
+
+    <!-- App shell -->
+    <template v-else>
+      <header class="bg-portuguese-green text-white px-4 py-3 flex items-center justify-between shadow-md">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🇵🇹</span>
+          <h1 class="text-lg font-semibold tracking-wide">My Portuguese Tutor</h1>
         </div>
-      </div>
-    </main>
+        <button @click="handleSignOut" class="text-green-200 text-sm hover:text-white transition-colors">
+          Sign out
+        </button>
+      </header>
 
-    <!-- Bottom nav (mobile-first) -->
-    <nav class="border-t border-gray-200 bg-white px-2 py-2 flex justify-around">
-      <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-portuguese-green">
-        <span class="text-xl">🏠</span>
-        <span class="text-xs font-medium">Home</span>
-      </button>
-      <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-gray-400">
-        <span class="text-xl">📚</span>
-        <span class="text-xs">Lessons</span>
-      </button>
-      <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-gray-400">
-        <span class="text-xl">💬</span>
-        <span class="text-xs">Practice</span>
-      </button>
-      <button class="flex flex-col items-center gap-0.5 px-4 py-1 text-gray-400">
-        <span class="text-xl">👤</span>
-        <span class="text-xs">Profile</span>
-      </button>
-    </nav>
+      <main class="flex-1 overflow-y-auto pb-20">
+        <Dashboard v-if="activeTab === 'home'" />
+        <Leaderboard v-else-if="activeTab === 'leaderboard'" />
+        <div v-else class="flex flex-col items-center justify-center h-full p-8 text-center text-gray-400">
+          <div class="text-4xl mb-3">🚧</div>
+          <p class="text-sm">Coming soon</p>
+        </div>
+      </main>
+
+      <!-- Bottom nav -->
+      <nav class="fixed bottom-0 left-0 right-0 border-t border-gray-200 bg-white px-2 py-2 flex justify-around">
+        <button
+          v-for="item in navItems"
+          :key="item.id"
+          @click="activeTab = item.id"
+          :class="activeTab === item.id ? 'text-portuguese-green' : 'text-gray-400'"
+          class="flex flex-col items-center gap-0.5 px-4 py-1"
+        >
+          <span class="text-xl">{{ item.icon }}</span>
+          <span class="text-xs" :class="activeTab === item.id ? 'font-medium' : ''">{{ item.label }}</span>
+        </button>
+      </nav>
+    </template>
+
   </div>
 </template>
 
 <script setup lang="ts">
-// App shell — populated as features are built
+import { ref } from 'vue'
+import { useAuth } from './composables/useAuth'
+import AuthScreen from './components/AuthScreen.vue'
+import Dashboard from './components/Dashboard.vue'
+import Leaderboard from './components/Leaderboard.vue'
+
+const { isLoggedIn, loading, signOut } = useAuth()
+
+const activeTab = ref('home')
+
+const navItems = [
+  { id: 'home',        icon: '🏠', label: 'Home' },
+  { id: 'lessons',     icon: '📚', label: 'Lessons' },
+  { id: 'practice',   icon: '💬', label: 'Practice' },
+  { id: 'leaderboard', icon: '🏆', label: 'Ranking' },
+  { id: 'profile',     icon: '👤', label: 'Profile' },
+]
+
+async function handleSignOut() {
+  await signOut()
+  activeTab.value = 'home'
+}
 </script>
 
 <style>
@@ -59,5 +86,9 @@
 
 .bg-portuguese-green {
   background-color: var(--color-portuguese-green);
+}
+
+.border-portuguese-green {
+  border-color: var(--color-portuguese-green);
 }
 </style>
